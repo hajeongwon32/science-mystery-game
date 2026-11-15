@@ -1,0 +1,19 @@
+node_modules/
+dist/
+exports/
+archive/
+*.local
+
+# Local credentials and environment files
+.env
+.env.*
+!.env.example
+.npmrc
+*.pem
+*.key
+
+# Logs and operating system files
+*.log
+.DS_Store
+Thumbs.db
+Desktop.ini

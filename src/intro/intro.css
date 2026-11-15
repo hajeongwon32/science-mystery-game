@@ -1,0 +1,821 @@
+@charset "UTF-8";
+/* 기본 색상과 글꼴 */
+:root {
+  color-scheme: dark;
+  --paper: #eee9dc;
+  --muted: #b8b8aa;
+  --gold: #c9b58a;
+  --ink: #111715;
+  --serif: 'Noto Serif KR', 'Batang', '바탕', serif;
+  --sans: 'Malgun Gothic', '맑은 고딕', sans-serif;
+}
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--ink);
+  color: var(--paper);
+}
+body {
+  font-family: var(--sans);
+  overflow: hidden;
+}
+button,
+a,
+input {
+  -webkit-tap-highlight-color: transparent;
+}
+button {
+  font: inherit;
+  cursor: pointer;
+  color: inherit;
+  border: 0;
+  background: none;
+}
+button:focus-visible,
+a:focus-visible,
+input:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 6px;
+}
+button:disabled {
+  opacity: 0.45;
+  cursor: wait;
+}
+[hidden] {
+  display: none !important;
+}
+#stage {
+  width: 100%;
+  height: 100svh;
+  min-height: 420px;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: #080b0b;
+}
+/* 배경 이미지와 명암 */
+.scenery {
+  position: absolute;
+  inset: 0;
+  z-index: -5;
+}
+.background {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 55% center;
+  transition:
+    opacity 1.7s,
+    filter 2s,
+    transform 10s linear;
+  transform: scale(1.035);
+  filter: brightness(0.78);
+}
+.room {
+  opacity: 0;
+  object-position: 50% center;
+}
+.shade {
+  position: absolute;
+  inset: 0;
+  z-index: -4;
+  background:
+    linear-gradient(90deg, rgba(7, 15, 14, 0.84), rgba(5, 10, 10, 0.23) 56%, rgba(5, 10, 10, 0.18)),
+    linear-gradient(0deg, rgba(5, 10, 10, 0.85), transparent 40%, rgba(6, 11, 11, 0.3));
+  transition: background 1s;
+}
+.grain {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  opacity: 0.055;
+  z-index: 8;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' opacity='.7' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+.rain-glow {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  z-index: -3;
+  background: linear-gradient(100deg, rgba(72, 115, 136, 0.07), transparent 45%);
+  animation: rainlight 10s infinite alternate;
+}
+#curtain {
+  position: absolute;
+  inset: 0;
+  background: #070b0b;
+  opacity: 0;
+  z-index: 4;
+  pointer-events: none;
+  transition: opacity 0.8s;
+}
+#curtain.closed {
+  opacity: 1;
+}
+/* 상단 재생 설정 */
+.topbar {
+  position: absolute;
+  z-index: 10;
+  left: 4%;
+  right: 4%;
+  top: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+}
+.wordmark {
+  font-family: var(--serif);
+  font-size: 13px;
+  color: var(--paper);
+  text-decoration: none;
+  letter-spacing: 3px;
+}
+.wordmark span {
+  display: block;
+  font: 8px var(--sans);
+  letter-spacing: 3px;
+  color: var(--muted);
+  margin-top: 6px;
+}
+.topbar nav {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+.topbar button {
+  font-size: 11px;
+  letter-spacing: 0.4px;
+  color: #d7d7cc;
+  padding: 6px 0;
+}
+.topbar #soundIcon {
+  font-size: 15px;
+  padding-right: 7px;
+}
+.topbar #fullscreen {
+  font-size: 23px;
+  line-height: 1;
+}
+.topbar #skip {
+  margin-left: 10px;
+}
+.topbar #skip span {
+  margin-left: 9px;
+}
+#volume {
+  width: 60px;
+  height: 2px;
+  accent-color: var(--gold);
+  opacity: 0.75;
+}
+/* 제목과 시작 화면 */
+.start {
+  position: absolute;
+  left: 9%;
+  top: 50%;
+  transform: translateY(-46%);
+  width: min(600px, 75%);
+  animation: enter 1.4s both;
+}
+.eyebrow {
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: var(--gold);
+  font-weight: 400;
+  margin: 0;
+}
+.small-rule {
+  width: 38px;
+  height: 1px;
+  background: var(--gold);
+  opacity: 0.65;
+  margin: 25px 0;
+}
+h1 {
+  font-family: var(--serif);
+  font-size: clamp(58px, 7.4vw, 110px);
+  font-weight: 400;
+  line-height: 1.22;
+  letter-spacing: 0.07em;
+  margin: 0 0 25px;
+  text-shadow: 0 2px 30px #0004;
+}
+h1 span {
+  padding-left: 0.53em;
+}
+h1 em {
+  display: block;
+  font: 9px var(--sans);
+  font-style: normal;
+  letter-spacing: 7px;
+  color: #c2beae;
+  margin-top: 22px;
+  margin-left: 6px;
+}
+.start-description {
+  font-family: var(--serif);
+  font-size: 14px;
+  line-height: 2.05;
+  color: #d4d2c6;
+  letter-spacing: 1px;
+  margin: 25px 0 30px;
+}
+.primary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 40px;
+  padding: 16px 0;
+  border-top: 1px solid #c9b58a66;
+  border-bottom: 1px solid #c9b58a66;
+  width: 245px;
+  text-align: left;
+  font-size: 13px;
+  letter-spacing: 2px;
+  transition:
+    color 0.2s,
+    padding 0.2s;
+}
+.primary:hover {
+  color: #e8cf99;
+  padding-left: 8px;
+  padding-right: 8px;
+}
+.primary span {
+  font-size: 22px;
+  line-height: 1;
+}
+.start-note {
+  font-size: 10px;
+  line-height: 1.9;
+  color: #a6aaa0;
+  letter-spacing: 0.4px;
+  margin: 18px 0 0;
+}
+/* 장소 표시와 사건 자막 */
+.location {
+  position: absolute;
+  left: 5.8%;
+  top: 112px;
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  font-size: 11px;
+  color: #d8d7cd;
+  letter-spacing: 2px;
+  z-index: 3;
+}
+.location i {
+  width: 24px;
+  height: 1px;
+  background: var(--gold);
+}
+.location span:first-child {
+  font-size: 15px;
+  letter-spacing: 2px;
+  color: var(--gold);
+}
+.chapter {
+  position: absolute;
+  left: 10%;
+  right: 10%;
+  top: 46%;
+  transform: translateY(-50%);
+  z-index: 5;
+  text-align: center;
+  animation: enter 1.2s both;
+}
+.chapter > span {
+  font-size: 11px;
+  letter-spacing: 5px;
+  color: var(--gold);
+}
+.chapter h2 {
+  font: 400 clamp(36px, 5vw, 76px)/1.4 var(--serif);
+  letter-spacing: 5px;
+  margin: 24px 0;
+}
+.chapter p {
+  font: 13px/2 var(--serif);
+  letter-spacing: 2px;
+  color: #c9c7b9;
+  margin-top: 20px;
+}
+.caption {
+  position: absolute;
+  z-index: 5;
+  left: 12%;
+  right: 12%;
+  bottom: 15%;
+  text-align: center;
+  animation: enter 0.6s both;
+  text-shadow: 0 2px 18px #000;
+}
+.caption > span {
+  display: block;
+  font-size: 11px;
+  letter-spacing: 3px;
+  color: var(--gold);
+  margin-bottom: 15px;
+}
+.caption p {
+  font: 400 clamp(17px, 1.7vw, 25px)/1.9 var(--serif);
+  margin: 0;
+  white-space: pre-line;
+  letter-spacing: 0.5px;
+}
+/* 인물 이미지와 소개 */
+.character {
+  position: absolute;
+  z-index: -1;
+  width: auto;
+  height: 94%;
+  aspect-ratio: 0.599;
+  bottom: -4%;
+  left: 64%;
+  transform: translateX(-50%);
+  background: url('assets/cast.png') 0 0/400% 100% no-repeat;
+  filter: brightness(0.84) drop-shadow(0 0 30px #0005);
+  animation: character-in 0.8s both;
+  pointer-events: none;
+}
+.identity {
+  position: absolute;
+  left: 9%;
+  top: 25%;
+  width: 35%;
+  animation: enter 0.8s both;
+}
+.identity h2 {
+  font: 400 clamp(38px, 5vw, 72px)/1.3 var(--serif);
+  letter-spacing: 8px;
+  margin: 23px 0 12px;
+}
+.suspect-name {
+  color: var(--muted);
+  font-size: 14px;
+  letter-spacing: 4px;
+  margin: 0;
+}
+.identity .small-rule {
+  margin: 23px 0;
+}
+.relation {
+  font: 14px/1.9 var(--serif);
+  letter-spacing: 1px;
+  color: #cfcdc0;
+  white-space: pre-line;
+}
+/* 용의자 대화창 */
+.dialogue {
+  position: absolute;
+  z-index: 6;
+  left: 7%;
+  right: 7%;
+  bottom: 9%;
+  padding: 24px 30px 15px;
+  background: linear-gradient(90deg, #09100fee, #0a1010e6 70%, #0b100fba);
+  border-top: 1px solid #c9b58a77;
+  box-shadow: 0 12px 60px #0005;
+  animation: enter 0.55s both;
+  min-height: 172px;
+}
+.dialogue-top {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+}
+.dialogue-top > span:first-child {
+  font: 16px var(--serif);
+  letter-spacing: 3px;
+  color: #e1d3b3;
+}
+.statement-tag {
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: #9b9f92;
+}
+.dialogue p {
+  font: clamp(16px, 1.55vw, 23px)/1.8 var(--serif);
+  letter-spacing: 0.5px;
+  margin: 18px 0;
+  min-height: 1.8em;
+  white-space: pre-line;
+}
+.dialogue-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #9caa9e;
+  font-size: 9px;
+  letter-spacing: 1px;
+}
+.dialogue-bottom button {
+  font-size: 11px;
+  padding: 5px 0 5px 25px;
+  color: #d4c6a6;
+  letter-spacing: 2px;
+}
+.dialogue-bottom button span {
+  margin-left: 12px;
+  font-size: 19px;
+}
+/* 인트로 종료와 다시 보기 */
+.ending {
+  position: absolute;
+  inset: 0;
+  z-index: 7;
+  padding: 12vh 9% 8vh;
+  background: linear-gradient(90deg, #080e0de8, #09100ecc 65%, #09100e50);
+  animation: enter 1s both;
+}
+.ending h2 {
+  font: 400 clamp(35px, 4.6vw, 65px)/1.5 var(--serif);
+  letter-spacing: 2px;
+  margin: 24px 0 18px;
+}
+.ending h2 em {
+  font-style: normal;
+  color: #d5c29a;
+}
+.ending-copy {
+  font: 13px/1.9 var(--serif);
+  letter-spacing: 1px;
+  color: #c3c4b8;
+}
+.cast-review {
+  display: flex;
+  gap: 17px;
+  margin: 24px 0 26px;
+}
+.cast-review button {
+  padding: 0;
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  font-size: 11px;
+  color: #c9c9ba;
+  transition: transform 0.2s;
+}
+.cast-review button:hover {
+  transform: translateY(-4px);
+  color: var(--gold);
+}
+.mini-face {
+  width: 68px;
+  height: 75px;
+  background-image: url('assets/cast.png');
+  background-size: 400% auto;
+  background-position-y: 0;
+  background-color: #17201c;
+  display: block;
+  border-bottom: 1px solid #b49c7155;
+  overflow: hidden;
+}
+.face-0 {
+  background-position-x: 0;
+}
+.face-1 {
+  background-position-x: 33.333%;
+}
+.face-2 {
+  background-position-x: 66.666%;
+}
+.face-3 {
+  background-position-x: 100%;
+}
+.ending .primary {
+  font-size: 11px;
+  width: 300px;
+}
+.ending-note {
+  font-size: 9px;
+  letter-spacing: 4px;
+  color: #899386;
+  margin-top: 20px;
+}
+/* 하단 정보와 진행 표시 */
+footer {
+  position: absolute;
+  z-index: 9;
+  bottom: 28px;
+  left: 4%;
+  right: 4%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 8px;
+  letter-spacing: 3px;
+  color: #a3aaa1;
+}
+.progress {
+  position: absolute;
+  z-index: 11;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #ffffff0d;
+}
+.progress span {
+  height: 100%;
+  width: 0;
+  display: block;
+  background: var(--gold);
+  transition: width 0.12s linear;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+}
+#error {
+  position: absolute;
+  z-index: 20;
+  bottom: 55px;
+  left: 5%;
+  right: 5%;
+  font-size: 12px;
+  color: #ecd2ae;
+  background: #17211fe8;
+  padding: 15px;
+}
+#stage[data-mode='suspect'] .room,
+#stage[data-mode='end'] .room {
+  opacity: 1;
+  filter: brightness(0.53);
+  transform: scale(1.02);
+}
+#stage[data-mode='suspect'] .corridor,
+#stage[data-mode='end'] .corridor {
+  opacity: 0;
+}
+#stage[data-mode='suspect'] .shade {
+  background:
+    linear-gradient(90deg, #07100de8, transparent 70%),
+    linear-gradient(0deg, #060b09b3, transparent 50%);
+}
+/* 등장 애니메이션 */
+@keyframes enter {
+  from {
+    opacity: 0;
+    translate: 0 12px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+@keyframes character-in {
+  from {
+    opacity: 0;
+    translate: 28px 0;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+@keyframes rainlight {
+  from {
+    opacity: 0.3;
+  }
+  to {
+    opacity: 0.9;
+  }
+}
+/* 화면 크기에 따른 배치 */
+@media (min-width: 1600px) {
+  .dialogue {
+    bottom: 10%;
+    padding: 28px 40px 20px;
+    min-height: 190px;
+  }
+  .start {
+    transform: translateY(-45%);
+  }
+}
+@media (max-width: 720px) {
+  .topbar {
+    top: 21px;
+  }
+  .topbar nav {
+    gap: 14px;
+  }
+  .wordmark {
+    font-size: 11px;
+  }
+  .topbar #soundLabel,
+  #volume {
+    display: none;
+  }
+  .topbar #skip {
+    font-size: 10px;
+  }
+  .start {
+    left: 8%;
+    top: 49%;
+    width: 84%;
+  }
+  h1 {
+    font-size: 64px;
+  }
+  .background {
+    object-position: 64% center;
+  }
+  .start-description {
+    font-size: 13px;
+  }
+  .location {
+    top: 91px;
+    left: 8%;
+    font-size: 9px;
+  }
+  .identity {
+    left: 7%;
+    top: 23%;
+    width: 47%;
+  }
+  .identity h2 {
+    font-size: 37px;
+    letter-spacing: 4px;
+    margin: 15px 0 9px;
+  }
+  .identity .eyebrow {
+    font-size: 8px;
+    letter-spacing: 2px;
+  }
+  .suspect-name {
+    font-size: 11px;
+  }
+  .identity .small-rule {
+    margin: 17px 0;
+  }
+  .relation {
+    font-size: 11px;
+    line-height: 1.8;
+    max-width: 160px;
+  }
+  .character {
+    height: 77%;
+    bottom: 7%;
+    left: 72%;
+    filter: brightness(0.8);
+  }
+  .dialogue {
+    left: 5%;
+    right: 5%;
+    bottom: 8%;
+    padding: 20px 18px 12px;
+    min-height: 182px;
+  }
+  .dialogue p {
+    font-size: 17px;
+    line-height: 1.8;
+    min-height: 3.6em;
+    margin: 14px 0 9px;
+  }
+  .dialogue-top > span:first-child {
+    font-size: 14px;
+  }
+  .dialogue-bottom {
+    font-size: 8px;
+    letter-spacing: 0;
+  }
+  .caption {
+    left: 8%;
+    right: 8%;
+    bottom: 18%;
+  }
+  .caption p {
+    font-size: 18px;
+  }
+  .chapter h2 {
+    font-size: 37px;
+    letter-spacing: 2px;
+  }
+  .ending {
+    padding: 17vh 8% 8vh;
+  }
+  .ending h2 {
+    font-size: 36px;
+  }
+  .ending .eyebrow {
+    font-size: 9px;
+    letter-spacing: 1px;
+  }
+  .cast-review {
+    gap: 12px;
+  }
+  .mini-face {
+    width: 57px;
+    height: 66px;
+  }
+  .ending .primary {
+    width: 270px;
+  }
+  .ending-copy {
+    font-size: 12px;
+  }
+  footer {
+    bottom: 20px;
+    font-size: 7px;
+    letter-spacing: 2px;
+  }
+}
+@media (max-height: 650px) and (min-width: 721px) {
+  .topbar {
+    top: 18px;
+  }
+  .start {
+    top: 51%;
+  }
+  h1 {
+    font-size: 62px;
+    margin-bottom: 10px;
+  }
+  h1 em {
+    margin-top: 13px;
+  }
+  .start .small-rule {
+    margin: 15px 0;
+  }
+  .start-description {
+    margin: 16px 0;
+    font-size: 12px;
+  }
+  .start-note {
+    font-size: 9px;
+    margin-top: 10px;
+  }
+  .primary {
+    padding: 12px 0;
+  }
+  .location {
+    top: 80px;
+  }
+  .identity {
+    top: 24%;
+  }
+  .identity h2 {
+    font-size: 42px;
+    margin: 15px 0 10px;
+  }
+  .identity .small-rule {
+    margin: 15px 0;
+  }
+  .relation {
+    font-size: 12px;
+  }
+  .dialogue {
+    min-height: 142px;
+    bottom: 9%;
+    padding: 17px 24px 10px;
+  }
+  .dialogue p {
+    font-size: 18px;
+    margin: 13px 0;
+  }
+  .ending {
+    padding: 13vh 8% 5vh;
+  }
+  .ending h2 {
+    font-size: 37px;
+    margin: 15px 0 10px;
+  }
+  .ending-copy {
+    font-size: 12px;
+  }
+  .cast-review {
+    margin: 16px 0;
+  }
+  .mini-face {
+    width: 55px;
+    height: 55px;
+  }
+  .ending-note {
+    margin-top: 14px;
+  }
+}
+/* 모션 감소 설정 */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+  .background {
+    transform: none !important;
+  }
+}
