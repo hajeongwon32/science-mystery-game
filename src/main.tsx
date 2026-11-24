@@ -1,9 +1,9 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import HotelIntro from './intro/HotelIntro';
+import ShipIntro from './game/ShipIntro';
 
 createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <HotelIntro />
+    <ShipIntro />
   </React.StrictMode>,
 );

@@ -36,6 +36,6 @@ html = html.replace(
 html = html.replace(stylesheet, () => `<style>${css.replace(/<\/style/gi, '<\\/style')}</style>`);
 const outputDirectory = path.join(root, 'exports');
 await mkdir(outputDirectory, { recursive: true });
-const output = path.join(outputDirectory, '호텔사건-React인트로.html');
+const output = path.join(outputDirectory, '창밖에있던사람-인트로.html');
 await writeFile(output, html, 'utf8');
-console.log('Standalone React intro: ' + output);
+console.log('Standalone opening playtest: ' + output);
