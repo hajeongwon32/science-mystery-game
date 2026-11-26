@@ -9,6 +9,7 @@ type Props = {
 export default function WindowStudy({ onLeave, onRecord }: Props) {
   const [lit, setLit] = useState(true);
   const [compared, setCompared] = useState(false);
+  const [asked, setAsked] = useState(false);
   const [feedback, setFeedback] = useState('');
   const heading = useRef<HTMLHeadingElement>(null);
 
@@ -45,27 +46,35 @@ export default function WindowStudy({ onLeave, onRecord }: Props) {
       <div className="study-notes">
         <p className="subtitle" aria-live="polite">
           {feedback ||
-            (compared
-              ? '이 관찰을 바탕으로 수첩에 무엇을 적을까?'
-              : lit
-                ? '뱃머리 기둥 옆에 노란불이 보인다. 이 자리에 서서 조리원에게 책상등을 꺼 달라고 해 보자.'
-                : '기둥은 그대로 보인다. 다시 불을 켜면 어떻게 될까?')}
+            (!asked
+              ? '내가 마지막으로 본 경수 씨는 조타실에서 글을 쓰고 있었다. 그 뒤에 정말 갑판으로 나갔을까?'
+              : compared
+                ? '조리원이 본 불빛을 경수 씨의 마지막 위치로 기록해도 될까?'
+                : lit
+                  ? '조리원 “얼굴까지는요. 저기 불 보이죠? 그날도 딱 저렇게 보였어요.” 오늘도 같은 곳에 불이 보인다.'
+                  : '기둥은 그대로 보인다. 다시 불을 켜면 어떻게 될까?')}
         </p>
-        <button className="quiet-button" onClick={switchLamp}>
-          {lit ? '책상등 끄기' : '책상등 켜기'}
-        </button>
+        {!asked ? (
+          <button className="quiet-button" onClick={() => setAsked(true)}>
+            “경수 씨 얼굴도 보셨어요?”
+          </button>
+        ) : (
+          <button className="quiet-button" onClick={switchLamp}>
+            {lit ? '책상등 끄기' : '책상등 켜기'}
+          </button>
+        )}
         {compared && (
           <div className="study-choices" role="group" aria-label="수첩에 적을 관찰">
             <button
               onClick={() =>
                 setFeedback(
-                  '기둥 옆 빛은 사라졌지만, 그날 그곳에 누가 서 있었는지는 이 창으로 확인할 수 없다. 다시 적어 보자.',
+                  '책상등을 끄자 사라진 건 오늘 창에 보인 빛이다. 그날 경수 씨가 어디에 있었는지는 다른 목격이 필요하다.',
                 )
               }
             >
-              그날 뱃머리에는 아무도 없었다.
+              경수 씨는 조타실에 계속 있었다.
             </button>
-            <button onClick={onRecord}>안쪽 책상등도 뱃머리의 불빛처럼 보인다.</button>
+            <button onClick={onRecord}>갑판 목격은 보류하고 얼굴을 본 시점을 묻는다.</button>
           </div>
         )}
       </div>

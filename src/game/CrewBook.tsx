@@ -49,7 +49,8 @@ export default function CrewBook({
               </li>
               {(lead === 'paper' || lead === 'engineer') && (
                 <li>
-                  조리원은 사건 전 복도에서 기관장이 경수 씨에게 종이를 건네는 모습을 봤다고 했다.
+                  조리원은 내가 갑판에 나간 뒤, 설거지하러 가기 전에 조타실 안에서 기관장의 종이를
+                  받는 경수 씨의 얼굴을 봤다고 했다. 창으로 불빛을 본 건 그 뒤였다.
                 </li>
               )}
               {lead === 'engineer' && (

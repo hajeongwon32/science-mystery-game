@@ -5,7 +5,8 @@
   "files.exclude": {
     "**/node_modules": true,
     "**/dist": true,
-    "**/exports": true
+    "**/exports": true,
+    "**/archive": true
   },
   "search.exclude": {
     "**/node_modules/**": true,

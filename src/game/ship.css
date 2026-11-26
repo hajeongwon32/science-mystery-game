@@ -190,8 +190,7 @@ input:focus-visible {
   margin-top: 0.6rem;
 }
 
-.ship-header p,
-.chapter {
+.ship-header p {
   margin: 0;
   color: var(--soft);
   font-size: 0.9rem;
@@ -497,6 +496,35 @@ input:focus-visible {
   display: flex;
   align-items: stretch;
   gap: 0.5rem;
+}
+
+.ranking-trigger {
+  margin-top: 0.65rem;
+}
+
+.rankings table {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+
+.rankings caption {
+  text-align: left;
+  margin: 0.8rem 0;
+}
+
+.rankings th,
+.rankings td {
+  padding: 0.5rem 0.25rem;
+  border-bottom: 1px solid #b5a98f;
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+
+.rankings th:last-child,
+.rankings td:last-child {
+  text-align: right;
+  white-space: nowrap;
 }
 
 .start-fields input {

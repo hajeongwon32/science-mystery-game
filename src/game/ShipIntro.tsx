@@ -2,6 +2,7 @@ import { useEffect, useReducer, useRef, useState, type FormEvent, type ReactNode
 import { connections, opening, progress } from './introState';
 import { detailAreas, doorAreas, roomImages, rooms, sceneImage } from './scenes';
 import CrewBook from './CrewBook';
+import RankingDialog from './RankingDialog';
 import { createShipSound } from './sound';
 import WindowStudy from './WindowStudy';
 import './ship.css';
@@ -173,12 +174,12 @@ function Voyage({ name, onRestart }: { name: string; onRestart: () => void }) {
       <Subtitle speaker="수첩 · 첫 관찰">
         바깥 풍경은 유리를 통과해 보였고, 안쪽 책상등은 유리에 반사돼 기둥과 겹쳤다. 불빛만으로 경수
         씨의 위치를 단정할 수 없다.{' '}
-        {lead === 'light' && '복도로 돌아가 조리원의 기억을 다시 들어 보자.'}
+        {lead === 'light' && '조리원이 마지막으로 경수 씨 얼굴을 본 곳은 어디였을까?'}
       </Subtitle>
     ) : (
       <Subtitle speaker="조리원">
-        “여기 문턱에 섰는데, 저 기둥 옆에 노란불이 하나 있더라고요. 경수 형이 손전등 들고 나온 줄
-        알았죠.”
+        “설거지 끝내고 여기 섰을 때였어요. 경수 형이 그물 보러 간다더니, 딱 저 기둥 옆에 불이
+        있더라고요.”
       </Subtitle>
     );
   } else if (investigating && location === 'corridor') {
@@ -187,14 +188,14 @@ function Voyage({ name, onRestart }: { name: string; onRestart: () => void }) {
     } else if (lead === 'paper') {
       subtitle = (
         <Subtitle speaker="조리원">
-          “불빛 말고 내가 직접 본 거요? 저녁 전에 여기서 기관장님이 경수 형한테 종이 한 장 건넸어요.
-          침실에 가 봐요.”
+          “얼굴이요? 설거지하러 가기 전이요. 당신이 갑판에 나간 뒤였어요. 기관장님이 이 문으로
+          종이를 내미니까 경수 형이 안에서 받아 갔어요.”
         </Subtitle>
       );
     } else if (recorded) {
       subtitle = (
         <Subtitle>
-          조리원이 그릇을 내려놓으려다 말고 나를 본다. 불빛 말고 직접 본 일이 있었을까?
+          내가 갑판에 나간 뒤에도 경수 씨가 조타실에 있었는지, 조리원에게 물어보자.
         </Subtitle>
       );
     } else {
@@ -322,7 +323,7 @@ function Voyage({ name, onRestart }: { name: string; onRestart: () => void }) {
           <Hotspot
             detail
             area={detailAreas.cook}
-            label="직접 본 일 묻기"
+            label="마지막으로 얼굴을 본 곳 묻기"
             onClick={() => dispatch({ type: 'ask-cook' })}
           />
         )}
@@ -391,13 +392,11 @@ function Voyage({ name, onRestart }: { name: string; onRestart: () => void }) {
           <div aria-live="polite">{subtitle}</div>
           {phase === 'onboard' && location === 'corridor' && (
             <p className="objective">
-              {!luggage && !report
-                ? '침실에 짐을 두고 조타실에 들르세요.'
-                : readyForBreak
-                  ? '갑판에 나가 잠깐 쉬세요.'
-                  : luggage
-                    ? '조타실에 들르세요.'
-                    : '침실에 짐을 두세요.'}
+              {readyForBreak
+                ? '갑판에 나가 잠깐 쉬세요.'
+                : [!report && '조타실에서 경수 씨의 보고서 보기', !luggage && '침실에 짐 두기']
+                    .filter(Boolean)
+                    .join('　·　')}
             </p>
           )}
           {afterArrival && location === 'corridor' && (
@@ -417,6 +416,7 @@ function Voyage({ name, onRestart }: { name: string; onRestart: () => void }) {
 export default function ShipIntro() {
   const [nickname, setNickname] = useState('');
   const [onboard, setOnboard] = useState(false);
+  const [rankingOpen, setRankingOpen] = useState(false);
 
   useEffect(() => {
     for (const source of roomImages) {
@@ -442,7 +442,6 @@ export default function ShipIntro() {
       <div className="scene">
         <img className="scene-image" src={rooms.deck.image} alt="" />
         <section className="title-content">
-          <p className="chapter">마지막 한 줄</p>
           <h1>
             창밖에
             <br />
@@ -465,7 +464,15 @@ export default function ShipIntro() {
               </button>
             </div>
           </form>
+          <button
+            className="quiet-button ranking-trigger"
+            type="button"
+            onClick={() => setRankingOpen(true)}
+          >
+            랭킹 보기
+          </button>
         </section>
+        {rankingOpen && <RankingDialog onClose={() => setRankingOpen(false)} />}
       </div>
     </main>
   );
